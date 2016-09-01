@@ -45,8 +45,14 @@ SOURCES = *.qml \
 }
 
 LIBS += -L$$WALLET_ROOT/lib \
-        -lwallet_merged \
-        -lwallet_merged2
+        -lcommon \
+        -lcryptonote_core \
+        -lcrypto1 \
+        -lmnemonics \
+        -lwallet \
+        -lunbound \
+        -lringct
+
 
 win32 {
     #QMAKE_LFLAGS += -static
@@ -103,6 +109,16 @@ macx {
 
 }
 
+
+
+
+#LIBS += -L$$WALLET_ROOT/lib \
+#        -lcommon \
+#        -lcrypto1 \
+#        -lcryptonote_core \
+#        -lmnemonics \
+#        -lwallet \
+#        -lunbound
 
 # translation stuff
 TRANSLATIONS =  \ # English is default language, no explicit translation file

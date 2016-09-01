@@ -29,13 +29,14 @@ rm -fr $BITMONERO_DIR/include
 mkdir -p $BITMONERO_DIR/build/release
 pushd $BITMONERO_DIR/build/release
 
+COMMON_CMAKE_OPTIONS="-D cmake -D CMAKE_BUILD_TYPE=Release -D STATIC=ON -D CMAKE_INSTALL_PREFIX=$BITMONERO_DIR -DINSTALL_GUI_DEPS=ON"
 
 if [ "$(uname)" == "Darwin" ]; then
     # Do something under Mac OS X platform        
     cmake -D CMAKE_BUILD_TYPE=Release -D STATIC=ON -D CMAKE_INSTALL_PREFIX="$BITMONERO_DIR"  ../..
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Do something under GNU/Linux platform
-    cmake -D CMAKE_BUILD_TYPE=Release -D STATIC=ON -D CMAKE_INSTALL_PREFIX="$BITMONERO_DIR"  ../..
+    cmake -D CMAKE_BUILD_TYPE=Release -D STATIC=ON -D CMAKE_INSTALL_PREFIX="$BITMONERO_DIR" -D INSTALL_GUI_DEPS=ON ../..
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     # Do something under Windows NT platform
     cmake -D CMAKE_BUILD_TYPE=Release -D STATIC=ON -D CMAKE_INSTALL_PREFIX="$BITMONERO_DIR" -G "MSYS Makefiles" ../..
@@ -49,6 +50,20 @@ pushd $BITMONERO_DIR/build/release/src/wallet
 make -j$CPU_CORE_COUNT
 make install -j$CPU_CORE_COUNT
 popd
+pushd $BITMONERO_DIR/build/release/src/cryptonote_core
+make install -j$CPU_CORE_COUNT
+popd
+pushd $BITMONERO_DIR/build/release/src/crypto
+make install -j$CPU_CORE_COUNT
+popd
+pushd $BITMONERO_DIR/build/release/src/common
+make install -j$CPU_CORE_COUNT
+popd
+pushd $BITMONERO_DIR/build/release/src/mnemonics
+make install -j$CPU_CORE_COUNT
+popd
+pushd $BITMONERO_DIR/build/release/external/unbound
+make install -j$CPU_CORE_COUNT
 popd
 
 
