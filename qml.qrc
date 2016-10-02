@@ -116,5 +116,8 @@
         <file>lang/flags/italy.png</file>
         <file>components/PasswordDialog.qml</file>
         <file>components/ProcessingSplash.qml</file>
+        <file>components/QRCode.qml</file>
+        <file>components/qqr.js</file>
+        
     </qresource>
 </RCC>

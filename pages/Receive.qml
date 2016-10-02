@@ -174,6 +174,40 @@ Rectangle {
             }
         }
 
+        RowLayout {
+            width:200
+            id: qrAdressRow
+            Label {
+                id: qrAdressLabel
+                fontSize: 14
+                text: qsTr("Address QR") + translationManager.emptyString
+                width: mainLayout.labelWidth + 10
+            }
+
+            QRCode {
+                width : 150
+                height : 150
+                value : addressLine.text
+                visible: (addressLine.text.length == 0)? false : true
+            }
+        }
+
+        RowLayout {
+            id: qrIntegratedAdressRow
+            Label {
+                id: qrIntegratedAdressLabel
+                fontSize: 14
+                text: qsTr("Integrated QR") + translationManager.emptyString
+                width: mainLayout.labelWidth + 10
+            }
+
+            QRCode {
+                width : 150
+                height : 150
+                value : integratedAddressLine.text
+                visible: (integratedAddressLine.text.length == 0)? false : true
+            }
+        }
     }
 
     Component.onCompleted: {
