@@ -330,7 +330,7 @@ Rectangle {
                 color: miningButton.checked || settingsButton.checked ? "#1C1C1C" : "#505050"
                 height: 1
             }
-
+            */
             // ------------- Settings tab ---------------
             MenuButton {
                 id: settingsButton
@@ -345,7 +345,7 @@ Rectangle {
                     panel.settingsClicked()
                 }
             }
-            */
+
         }
 
         NetworkStatusItem {
