@@ -218,8 +218,12 @@ ApplicationWindow {
         if (splash.visible) {
             hideProcessingSplash()
         }
+        var dCurrentBlock = currentWallet.daemonBlockChainHeight();
+        var dTargetBlock = currentWallet.daemonBlockChainTargetHeight();
+        leftPanel.daemonProgress.updateProgress(dCurrentBlock,dTargetBlock);
 
         leftPanel.networkStatus.connected = currentWallet.connected
+
         onWalletUpdate();
     }
 
@@ -230,6 +234,7 @@ ApplicationWindow {
             splash.heightProgressText = progressText
         }
     }
+
 
 
     function walletsFound() {
