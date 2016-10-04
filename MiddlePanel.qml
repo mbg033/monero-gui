@@ -43,6 +43,11 @@ Rectangle {
     onCurrentViewChanged: {
         if (currentView) {
             stackView.replace(currentView)
+
+            // Component.onCompleted is called before wallet is initilized
+            if (typeof currentView.onPageCompleted === "function") {
+                currentView.onPageCompleted();
+            }
         }
     }
 
