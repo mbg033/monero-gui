@@ -54,7 +54,6 @@ ApplicationWindow {
     property var transaction;
     property alias password : passwordDialog.password
     property int splashCounter: 0
-    property bool name: value
     // true if wallet ever synchronized
     property bool walletInitialized : false
 
