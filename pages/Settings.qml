@@ -47,37 +47,36 @@ Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.right: parent.right
+        spacing: 10
 
-        spacing: 20
-        property int labelWidth: 120
-        property int editWidth: 400
-        property int lineEditFontSize: 12
 
-        RowLayout {
-            id: paymentIdRow
-            Label {
-                id: seedLabel
-                color: "#4A4949"
-                text: qsTr("Mnemonic seed") + translationManager.emptyString
-            }
+        Label {
+            id: seedLabel
+            color: "#4A4949"
+            fontSize: 16
+            text: qsTr("Mnemonic seed: ") + translationManager.emptyString
+            Layout.preferredWidth: 100
+            Layout.alignment: Qt.AlignLeft
+        }
 
-            TextArea {
-                id: memoTextInput
-                textMargin: 8
-                font.family: "Arial"
-                font.pointSize: 15
-                wrapMode: TextEdit.WordWrap
-                readOnly: true
-                selectByMouse: true
-                height: 300
-                width: 500
-                text: qsTr("Click button to show seed") + translationManager.emptyString
-            }
-           Image {
+        TextArea {
+            id: memoTextInput
+            textMargin: 6
+            font.family: "Arial"
+            font.pointSize: 14
+            wrapMode: TextEdit.WordWrap
+            readOnly: true
+            selectByMouse: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 100
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("Click button to show seed") + translationManager.emptyString
+            Image {
                 id : clipboardButton
                 anchors.right: memoTextInput.right
                 anchors.bottom: memoTextInput.bottom
                 source: "qrc:///images/greyTriangle.png"
+
                 Image {
                     anchors.centerIn: parent
                     source: "qrc:///images/copyToClipboard.png"
@@ -88,43 +87,43 @@ Rectangle {
                     onClicked: clipboard.setText(memoTextInput.text)
                 }
             }
+        }
 
+        StandardButton {
+            id: showSeedButton
 
-            StandardButton {
-                id: showSeedButton
-                width: 80
-                fontSize: 14
-                shadowReleasedColor: "#FF4304"
-                shadowPressedColor: "#B32D00"
-                releasedColor: "#FF6C3C"
-                pressedColor: "#FF4304"
-                text: qsTr("Show seed")
-                onClicked: {
-                    memoTextInput.text = currentWallet.seed
-                }
+            fontSize: 14
+            shadowReleasedColor: "#FF4304"
+            shadowPressedColor: "#B32D00"
+            releasedColor: "#FF6C3C"
+            pressedColor: "#FF4304"
+            text: qsTr("Show seed")
+            Layout.alignment: Qt.AlignRight
+            Layout.preferredWidth: 100
+            onClicked: {
+                memoTextInput.text = currentWallet.seed
             }
         }
 
-        RowLayout {
-            id: wordsTipTextRow
-
-            Text {
-                id: wordsTipText
-                font.family: "Arial"
-                font.pixelSize: 15
-                color: "#4A4646"
-                wrapMode: Text.WordWrap
-                text: qsTr("It is very important to write it down as this is the only backup you will need for your wallet.")
-                    + translationManager.emptyString
-            }
+        Text {
+            id: wordsTipText
+            font.family: "Arial"
+            font.pointSize: 12
+            color: "#4A4646"
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            text: qsTr("It is very important to write it down as this is the only backup you will need for your wallet.")
+                  + translationManager.emptyString
         }
 
-
-       Component.onCompleted: {
-            console.log("Settings page loaded");
-       }
 
     }
+
+    Component.onCompleted: {
+        console.log("Settings page loaded");
+    }
+
+
 }
 
 

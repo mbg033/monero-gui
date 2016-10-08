@@ -38,12 +38,14 @@ Rectangle {
 
     property Item currentView
     property bool basicMode : false
+    property string balanceText
+    property string unlockedBalanceText
+
     property Transfer transferView: Transfer { }
     property Receive receiveView: Receive { }
     property History historyView: History { }
     property Settings settingsView: Settings { }
-    property string balanceText
-    property string unlockedBalanceText
+
 
     signal paymentClicked(string address, string paymentId, double amount, int mixinCount, int priority)
     signal generatePaymentIdInvoked()
@@ -53,8 +55,6 @@ Rectangle {
     onCurrentViewChanged: {
         if (currentView) {
             stackView.replace(currentView)
-            stackView.update()
-            console.log("stackView contains : " + stackView.depth)
         }
     }
 
