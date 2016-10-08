@@ -220,6 +220,9 @@ ApplicationWindow {
         if (splash.visible) {
             hideProcessingSplash()
         }
+        var dCurrentBlock = currentWallet.daemonBlockChainHeight();
+        var dTargetBlock = currentWallet.daemonBlockChainTargetHeight();
+        leftPanel.daemonProgress.updateProgress(dCurrentBlock,dTargetBlock);
 
         // initialize transaction history once wallet is initializef first time;
         if (!walletInitialized) {
@@ -229,6 +232,7 @@ ApplicationWindow {
         }
 
         leftPanel.networkStatus.connected = currentWallet.connected
+
         onWalletUpdate();
     }
 
@@ -255,6 +259,7 @@ ApplicationWindow {
         currentWallet.refresh()
         currentWallet.history.refresh() // this will refresh model
     }
+
 
 
     function walletsFound() {
