@@ -210,9 +210,9 @@ ApplicationWindow {
 
     function onWalletUpdate() {
         console.log(">>> wallet updated")
-        basicPanel.unlockedBalanceText = leftPanel.unlockedBalanceText =
-                walletManager.displayAmount(currentWallet.unlockedBalance);
-        basicPanel.balanceText = leftPanel.balanceText = walletManager.displayAmount(currentWallet.balance);
+//        basicPanel.unlockedBalanceText = leftPanel.unlockedBalanceText =
+//                walletManager.displayAmount(currentWallet.unlockedBalance);
+//        basicPanel.balanceText = leftPanel.balanceText = walletManager.displayAmount(currentWallet.balance);
     }
 
     function onWalletRefresh() {
@@ -349,7 +349,7 @@ ApplicationWindow {
         middlePanel.enabled = enable;
         leftPanel.enabled = enable;
         rightPanel.enabled = enable;
-        basicPanel.enabled = enable;
+        // basicPanel.enabled = enable;
     }
 
     function showProcessingSplash(message) {
@@ -525,7 +525,7 @@ ApplicationWindow {
         MiddlePanel {
             id: middlePanel
             anchors.bottom: parent.bottom
-            anchors.left: leftPanel.right
+            anchors.left: leftPanel.visible ?  leftPanel.right : parent.left
             anchors.right: rightPanel.left
             height: parent.height
             state: "Transfer"
@@ -534,16 +534,6 @@ ApplicationWindow {
         TipItem {
             id: tipItem
             text: qsTr("send to the same destination") + translationManager.emptyString
-            visible: false
-        }
-
-        BasicPanel {
-            id: basicPanel
-            x: 0
-            anchors.bottom: parent.bottom
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
             visible: false
         }
 
@@ -602,25 +592,26 @@ ApplicationWindow {
                 duration: 200
             }
             PropertyAction {
-                targets: [leftPanel, middlePanel, rightPanel]
+                targets: [leftPanel, rightPanel]
                 properties: "visible"
                 value: false
             }
             PropertyAction {
-                target: basicPanel
-                properties: "visible"
+                target: middlePanel
+                properties: "basicMode"
                 value: true
             }
+
             NumberAnimation {
                 target: appWindow
                 properties: "height"
-                to: basicPanel.height
+                to: middlePanel.height
                 easing.type: Easing.InCubic
                 duration: 200
             }
 
             onStopped: {
-                middlePanel.visible = false
+                // middlePanel.visible = false
                 rightPanel.visible = false
                 leftPanel.visible = false
             }
@@ -636,8 +627,8 @@ ApplicationWindow {
                 duration: 200
             }
             PropertyAction {
-                target: basicPanel
-                properties: "visible"
+                target: middlePanel
+                properties: "basicMode"
                 value: false
             }
             PropertyAction {
@@ -730,8 +721,13 @@ ApplicationWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             onGoToBasicVersion: {
-                if(yes) goToBasicAnimation.start()
-                else goToProAnimation.start()
+                if (yes) {
+                    // basicPanel.currentView = middlePanel.currentView
+                    goToBasicAnimation.start()
+                } else {
+                    // middlePanel.currentView = basicPanel.currentView
+                    goToProAnimation.start()
+                }
             }
 
             MouseArea {
