@@ -41,6 +41,7 @@ Rectangle {
     property Transfer transferView: Transfer { }
     property Receive receiveView: Receive { }
     property History historyView: History { }
+    property Settings settingsView: Settings { }
     property string balanceText
     property string unlockedBalanceText
 
@@ -84,31 +85,31 @@ Rectangle {
     //        }
     //    ]
 
-    states: [
-        State {
-            name: "Dashboard"
-            PropertyChanges {  }
-        }, State {
-            name: "History"
-            PropertyChanges { target: root; currentView: historyView }
-            PropertyChanges { target: historyView; model: appWindow.currentWallet.historyModel }
-        }, State {
-            name: "Transfer"
-            PropertyChanges { target: root; currentView: transferView }
-        }, State {
-            name: "Receive"
-            PropertyChanges { target: root; currentView: receiveView }
-        }, State {
-            name: "AddressBook"
-            PropertyChanges { /*TODO*/ }
-        }, State {
-            name: "Settings"
-            PropertyChanges { /*TODO*/ }
-        }, State {
-            name: "Mining"
-            PropertyChanges { /*TODO*/ }
-        }
-    ]
+        states: [
+            State {
+                name: "Dashboard"
+                PropertyChanges {  }
+            }, State {
+                name: "History"
+                PropertyChanges { target: root; currentView: historyView }
+                PropertyChanges { target: historyView; model: appWindow.currentWallet.historyModel }
+            }, State {
+                name: "Transfer"
+                PropertyChanges { target: root; currentView: transferView }
+            }, State {
+               name: "Receive"
+               PropertyChanges { target: root; currentView: receiveView }
+            }, State {
+                name: "AddressBook"
+                PropertyChanges { /*TODO*/ }
+            }, State {
+                name: "Settings"
+               PropertyChanges { target: root; currentView: settingsView }
+            }, State {
+                name: "Mining"
+                PropertyChanges { /*TODO*/ }
+            }
+        ]
 
     // color stripe at the top
     Row {
