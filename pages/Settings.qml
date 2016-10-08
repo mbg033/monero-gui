@@ -32,7 +32,6 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 
 import "../components"
-import moneroComponents 1.0
 import moneroComponents.Clipboard 1.0
 
 Rectangle {
@@ -92,7 +91,7 @@ Rectangle {
 
 
             StandardButton {
-                id: showSeedbtn
+                id: showSeedButton
                 width: 80
                 fontSize: 14
                 shadowReleasedColor: "#FF4304"
@@ -122,7 +121,7 @@ Rectangle {
 
 
        Component.onCompleted: {
-        console.log("Settings page loaded");
+            console.log("Settings page loaded");
        }
 
     }
