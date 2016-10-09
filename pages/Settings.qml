@@ -36,7 +36,6 @@ import QtQuick.Dialogs 1.2
 import "../components"
 import moneroComponents.Clipboard 1.0
 
-
 Rectangle {
 
     property var daemonAddress

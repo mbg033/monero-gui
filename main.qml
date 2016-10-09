@@ -57,7 +57,6 @@ ApplicationWindow {
     property bool isNewWallet: false
     property int restoreHeight:0
 
-
     // true if wallet ever synchronized
     property bool walletInitialized : false
 
@@ -152,18 +151,20 @@ ApplicationWindow {
 
         // wallet already opened with wizard, we just need to initialize it
         if (typeof wizard.settings['wallet'] !== 'undefined') {
-
             console.log("using wizard wallet")
             //Set restoreHeight
-            if (persistentSettings.restoreHeight > 0) {
+            if(persistentSettings.restoreHeight > 0){
                 restoreHeight = persistentSettings.restoreHeight
             }
 
+            console.log("using wizard wallet")
+
             connectWallet(wizard.settings['wallet'])
+
+            isNewWallet = true
             // We don't need the wizard wallet any more - delete to avoid conflict with daemon adress change
             delete wizard.settings['wallet']
-
-       }  else {
+        }  else {
             var wallet_path = walletPath();
             // console.log("opening wallet at: ", wallet_path, "with password: ", appWindow.password);
             console.log("opening wallet at: ", wallet_path, ", testnet: ", persistentSettings.testnet);
@@ -241,6 +242,14 @@ ApplicationWindow {
         var dCurrentBlock = currentWallet.daemonBlockChainHeight();
         var dTargetBlock = currentWallet.daemonBlockChainTargetHeight();
         leftPanel.daemonProgress.updateProgress(dCurrentBlock,dTargetBlock);
+
+        // Store wallet after first refresh. To prevent broken wallet after a crash
+        // TODO: Move this to libwallet?
+        if(isNewWallet && currentWallet.blockChainHeight() > 0){
+            currentWallet.store(persistentSettings.wallet_path)
+            isNewWallet = false
+            console.log("wallet stored after first successfull refresh")
+        }
 
         // Store wallet after first refresh. To prevent broken wallet after a crash
         // TODO: Move this to libwallet?
@@ -446,7 +455,7 @@ ApplicationWindow {
         property bool   testnet: true
         property string daemon_address: "localhost:38081"
         property string payment_id
-        property int    restore_height : 0
+        property int restoreHeight:0
     }
 
     // TODO: replace with customized popups
