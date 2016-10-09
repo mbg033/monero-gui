@@ -54,6 +54,10 @@ ApplicationWindow {
     property var transaction;
     property alias password : passwordDialog.password
     property int splashCounter: 0
+    property bool isNewWallet: false
+    property int restoreHeight:0
+
+
     // true if wallet ever synchronized
     property bool walletInitialized : false
 
@@ -141,20 +145,25 @@ ApplicationWindow {
         // basicPanel.paymentClicked.connect(handlePayment);
 
         // currentWallet is defined on daemon address change - close/reopen
-        if (currentWallet != undefined) {
+        if (currentWallet !== undefined) {
             console.log("closing currentWallet")
             walletManager.closeWallet(currentWallet);
         }
 
         // wallet already opened with wizard, we just need to initialize it
         if (typeof wizard.settings['wallet'] !== 'undefined') {
-            console.log("using wizard wallet")
-            connectWallet(wizard.settings['wallet'])
 
+            console.log("using wizard wallet")
+            //Set restoreHeight
+            if (persistentSettings.restoreHeight > 0) {
+                restoreHeight = persistentSettings.restoreHeight
+            }
+
+            connectWallet(wizard.settings['wallet'])
             // We don't need the wizard wallet any more - delete to avoid conflict with daemon adress change
             delete wizard.settings['wallet']
 
-        }  else {
+       }  else {
             var wallet_path = walletPath();
             // console.log("opening wallet at: ", wallet_path, "with password: ", appWindow.password);
             console.log("opening wallet at: ", wallet_path, ", testnet: ", persistentSettings.testnet);
@@ -233,11 +242,18 @@ ApplicationWindow {
         var dTargetBlock = currentWallet.daemonBlockChainTargetHeight();
         leftPanel.daemonProgress.updateProgress(dCurrentBlock,dTargetBlock);
 
+        // Store wallet after first refresh. To prevent broken wallet after a crash
+        // TODO: Move this to libwallet?
+        if(isNewWallet && currentWallet.blockChainHeight() > 0){
+            currentWallet.store(persistentSettings.wallet_path)
+            isNewWallet = false
+            console.log("wallet stored after first successfull refresh")
+        }
+
         // initialize transaction history once wallet is initializef first time;
         if (!walletInitialized) {
             currentWallet.history.refresh()
             walletInitialized = true
-
         }
 
         leftPanel.networkStatus.connected = currentWallet.connected
@@ -247,10 +263,17 @@ ApplicationWindow {
 
     function onWalletNewBlock(blockHeight) {
         if (splash.visible) {
-            var currHeight = blockHeight.toFixed(0)
-            if(currHeight > splashCounter + 1000){
+            var currHeight = blockHeight
+
+            //fast refresh until restoreHeight is reached
+            var increment = ((restoreHeight == 0) || currHeight < restoreHeight)? 1000 : 10
+
+            if(currHeight > splashCounter + increment){
               splashCounter = currHeight
-              var progressText = qsTr("Synchronizing blocks %1/%2").arg(currHeight).arg(currentWallet.daemonBlockChainHeight().toFixed(0));
+              var locale = Qt.locale()
+              var currHeightString = currHeight.toLocaleString(locale,"f",0)
+              var targetHeightString = currentWallet.daemonBlockChainHeight().toLocaleString(locale,"f",0)
+              var progressText = qsTr("Synchronizing blocks %1/%2").arg(currHeightString).arg(targetHeightString);
               console.log("Progress text: " + progressText);
               splash.heightProgressText = progressText
             }
@@ -411,6 +434,8 @@ ApplicationWindow {
 
     Settings {
         id: persistentSettings
+        // property names with underscore (not camelCase) here,
+        // as these names will be written to the settings storage (file/registry)
         property string language
         property string locale
         property string account_name
@@ -421,6 +446,7 @@ ApplicationWindow {
         property bool   testnet: true
         property string daemon_address: "localhost:38081"
         property string payment_id
+        property int    restore_height : 0
     }
 
     // TODO: replace with customized popups
