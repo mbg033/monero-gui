@@ -144,7 +144,8 @@ ApplicationWindow {
         // basicPanel.paymentClicked.connect(handlePayment);
 
         // currentWallet is defined on daemon address change - close/reopen
-        if (currentWallet !== undefined) {
+        // TODO: strict comparison here (!==) causes crash after passwordDialog on previously crashed unsynced wallets
+        if (currentWallet != undefined) {
             console.log("closing currentWallet")
             walletManager.closeWallet(currentWallet);
         }
@@ -153,12 +154,11 @@ ApplicationWindow {
         if (typeof wizard.settings['wallet'] !== 'undefined') {
             console.log("using wizard wallet")
             //Set restoreHeight
-            if(persistentSettings.restoreHeight > 0){
-                restoreHeight = persistentSettings.restoreHeight
+            if(persistentSettings.restore_height > 0){
+                restoreHeight = persistentSettings.restore_height
             }
 
             console.log("using wizard wallet")
-
             connectWallet(wizard.settings['wallet'])
 
             isNewWallet = true
@@ -183,7 +183,9 @@ ApplicationWindow {
         currentWallet.moneySpent.connect(onWalletMoneySent)
         currentWallet.moneyReceived.connect(onWalletMoneyReceived)
         console.log("initializing with daemon address: ", persistentSettings.daemon_address)
-        currentWallet.initAsync(persistentSettings.daemon_address, 0);
+        console.log("Recovering from seed: ", persistentSettings.is_recovering)
+        console.log("restore Height", persistentSettings.restore_height)
+        currentWallet.initAsync(persistentSettings.daemon_address, 0, persistentSettings.is_recovering, persistentSettings.restore_height);
     }
 
     function walletPath() {
@@ -244,15 +246,6 @@ ApplicationWindow {
         leftPanel.daemonProgress.updateProgress(dCurrentBlock,dTargetBlock);
 
         // Store wallet after first refresh. To prevent broken wallet after a crash
-        // TODO: Move this to libwallet?
-        if(isNewWallet && currentWallet.blockChainHeight() > 0){
-            currentWallet.store(persistentSettings.wallet_path)
-            isNewWallet = false
-            console.log("wallet stored after first successfull refresh")
-        }
-
-        // Store wallet after first refresh. To prevent broken wallet after a crash
-        // TODO: Move this to libwallet?
         if(isNewWallet && currentWallet.blockChainHeight() > 0){
             currentWallet.store(persistentSettings.wallet_path)
             isNewWallet = false
@@ -263,6 +256,11 @@ ApplicationWindow {
         if (!walletInitialized) {
             currentWallet.history.refresh()
             walletInitialized = true
+        }
+
+        // recovering from seed is finished after first refresh
+        if(persistentSettings.is_recovering) {
+            persistentSettings.is_recovering = false
         }
 
         leftPanel.networkStatus.connected = currentWallet.connected
@@ -455,7 +453,8 @@ ApplicationWindow {
         property bool   testnet: true
         property string daemon_address: "localhost:38081"
         property string payment_id
-        property int restoreHeight:0
+        property int    restore_height : 0
+        property bool   is_recovering : false
     }
 
     // TODO: replace with customized popups
@@ -797,5 +796,9 @@ ApplicationWindow {
                 }
             }
         }
+    }
+    onClosing: {
+        walletManager.closeWallet(currentWallet);
+        console.log("onClosing called");
     }
 }
