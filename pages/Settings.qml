@@ -72,11 +72,11 @@ Rectangle {
         id: settingsPasswordDialog
         standardButtons: StandardButton.Ok  + StandardButton.Cancel
         onAccepted: {
-            if(appWindow.password == settingsPasswordDialog.password){
+            if(appWindow.password === settingsPasswordDialog.password){
                 memoTextInput.text = currentWallet.seed
                 showSeedButton.visible = false
             }
-
+            settingsPasswordDialog.password = ""
         }
         onRejected: {
 
@@ -190,7 +190,7 @@ Rectangle {
 
                 Layout.fillWidth: true
                 color: "#4A4949"
-                text: qsTr("Daemon adress") + translationManager.emptyString
+                text: qsTr("Daemon address") + translationManager.emptyString
                 fontSize: 16
             }
 
